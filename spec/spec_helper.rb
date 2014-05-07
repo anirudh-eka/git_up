@@ -4,6 +4,9 @@ require File.expand_path("../../config/environment", __FILE__)
 require 'rspec/rails'
 require 'rspec/autorun'
 require 'capybara/rspec'
+require 'webmock/rspec'
+
+WebMock.disable_net_connect!(allow_localhost: true)
 
 # Requires supporting ruby files with custom matchers and macros, etc,
 # in spec/support/ and its subdirectories.
@@ -40,4 +43,10 @@ RSpec.configure do |config|
   # the seed, which is printed after each run.
   #     --seed 1234
   config.order = "random"
+
+  config.before(:each) do
+    stub_request(:get, "http://naawayday2014.sched.org/api/session/list?api_key=6c49777353dec923f2096928d5c6a2bc&format=json").
+         with(:headers => {'Accept'=>'*/*', 'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3', 'Host'=>'naawayday2014.sched.org', 'User-Agent'=>'Ruby'}).
+         to_return(:status => 200, :body => "stubbed response", :headers => {})
+  end
 end
