@@ -28,6 +28,7 @@ gem 'spring',        group: :development
 
 group :development, :test do
   gem 'rspec-rails', '~> 2.0'
+  gem 'jasmine-rails'
 end
 
 group :test do
