@@ -14,7 +14,7 @@ Dir[Rails.root.join("spec/support/**/*.rb")].each { |f| require f }
 
 # Checks for pending migrations before tests are run.
 # If you are not using ActiveRecord, you can remove this line.
-ActiveRecord::Migration.maintain_test_schema!
+# ActiveRecord::Migration.maintain_test_schema!
 
 RSpec.configure do |config|
   # ## Mock Framework
@@ -44,9 +44,17 @@ RSpec.configure do |config|
   #     --seed 1234
   config.order = "random"
 
+  response = [
+        {"name"=>"Dinner", "event_start"=>"2014-06-07 20:30:00"},
+        {"name"=>"Lunch", "event_start"=>"2014-06-07 12:30:00"}
+      ].to_json
+
   config.before(:each) do
-    stub_request(:get, "http://naawayday2014.sched.org/api/session/list?api_key=6c49777353dec923f2096928d5c6a2bc&format=json").
-         with(:headers => {'Accept'=>'*/*', 'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3', 'Host'=>'naawayday2014.sched.org', 'User-Agent'=>'Ruby'}).
-         to_return(:status => 200, :body => "stubbed response", :headers => {})
+    current_date_time = DateTime.parse("2014-06-07 16:00:00")
+    allow(DateTime).to receive(:now) { current_date_time }
+
+    stub_request(:get, /.+naawayday2014.sched.org\/api\/session\/list\?.+/).
+         # with(:headers => {'Accept'=>'*/*', 'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3', 'Host'=>'naawayday2014.sched.org', 'User-Agent'=>'Ruby'}).
+         to_return(:status => 200, :body => response, :headers => {'content-type' => 'application/json'})
   end
 end
