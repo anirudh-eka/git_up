@@ -1,5 +1,5 @@
 class TimerController < ApplicationController
   def show
-    @sched_event = SchedEvent.find_next
+    @sched_event = SchedEventService.find_next
   end
 end

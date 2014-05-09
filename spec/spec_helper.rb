@@ -45,8 +45,8 @@ RSpec.configure do |config|
   config.order = "random"
 
   response = [
-        {"name"=>"Dinner", "event_start"=>"2014-06-07 20:30:00"},
-        {"name"=>"Lunch", "event_start"=>"2014-06-07 12:30:00"}
+        {"name"=>"Lunch", "event_start"=>"2014-06-07 12:30:00"},
+        {"name"=>"Dinner", "event_start"=>"2014-06-07 20:30:00"}
       ].to_json
 
   config.before(:each) do
