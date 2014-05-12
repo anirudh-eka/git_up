@@ -27,7 +27,7 @@ describe 'home page' do
     allow(DateTime).to receive(:now) { current_date_time }
     
     visit '/'
-    page.should have_content("Start Time: 08:30 PM")
+    page.should have_content("Start Time: 8:30 PM")
   end
 
   #display difference in firefox vs. chrome : so test differs when using selinium/firefox
