@@ -1,10 +1,20 @@
-<h1>Welcome to the Away Day Timer!</h1>
-<ul>
-	<li>Current Time: <span id="current-time"><%= DateTime.now.strftime("%l:%M:%S %p")%></span></li>
-	<li>Next Event: <span id="event-name"><%= @sched_event.name %></li>
-	<li>Location: <%= @sched_event.venue %></li>
-	<li>Start Time: <span id="event-start-time" data-datestring="<%= @sched_event.start_time%>">
-			<%= @sched_event.start_time.strftime("%l:%M %p") %>
-		</span></li>
-	<li>Time Left: <span id="time-left"></span></li>
-</ul>
+<section class="current-time">
+	Current Time: <span id="current-time"><%= DateTime.now.strftime("%l:%M:%S %p")%></span></li>
+</section>
+
+<div class="content">
+<section class="current-event-timer">
+	<span id="time-left"></span>
+	<sub>until next event</sub>
+</section>
+
+<section class="next-event-details">
+	<ul>
+		<li><strong>Next Event:</strong> <span id="event-name"><%= @sched_event.name %></li>
+		<li><strong>Location:</strong> <%= @sched_event.venue %></li>
+		<li><strong>Start Time:</strong> <span id="event-start-time" data-datestring="<%= @sched_event.start_time%>">
+				<%= @sched_event.start_time.strftime("%l:%M %p") %>
+			</span></li>
+	</ul>
+</section>
+<div>

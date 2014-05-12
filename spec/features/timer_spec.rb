@@ -1,10 +1,6 @@
 require 'spec_helper'
 
 describe 'home page' do
-  it 'welcomes the user to the timer' do
-    visit '/'
-    page.should have_content('Welcome to the Away Day Timer!')
-  end
 
   it 'shows next event name' do 
     current_date_time = DateTime.parse("2014-06-07 16:00:00")
