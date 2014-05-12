@@ -38,20 +38,18 @@ function Timer() {
 		formatedTime += ":";
 
 		var time = new Date(time);
-		if(time.getMinutes() < 10) {
-			formatedTime += "0"+time.getMinutes();
-		} else {
-			formatedTime += time.getMinutes();
-		}
-
+		formatedTime += _formatTensPlace(time.getMinutes());
 		formatedTime += ":";
-
-		if(time.getSeconds() < 10) {
-			formatedTime += "0"+time.getSeconds();
-		} else {
-			formatedTime += time.getSeconds();
-		}
+		formatedTime += _formatTensPlace(time.getSeconds());
 		return formatedTime
+	}
+
+	function _formatTensPlace(number) {
+		if(number < 10) {
+			return "0"+number;
+		} else {
+			return number;
+		}
 	}
 }
 
