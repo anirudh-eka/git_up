@@ -13,7 +13,7 @@ class SchedEventService
     resp = HTTParty.get(url, :headers => {"User-Agent" => "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/34.0.1847.131 Safari/537.36"})
     events = []
     resp.parsed_response.each do |event|
-      events << SchedEvent.new(event["name"], event["event_start"])
+      events << SchedEvent.new(event["name"], event["event_start"], event["venue"])
     end
     events
   end

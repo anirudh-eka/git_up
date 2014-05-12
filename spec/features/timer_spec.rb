@@ -6,13 +6,29 @@ describe 'home page' do
     page.should have_content('Welcome to the Away Day Timer!')
   end
 
-  it 'shows next event' do 
+  it 'shows next event name' do 
     current_date_time = DateTime.parse("2014-06-07 16:00:00")
     allow(DateTime).to receive(:now) { current_date_time }
 
     visit '/'
     page.should have_content('Next Event: Dinner')
   end
+
+  it 'shows the location of next event' do
+    current_date_time = DateTime.parse("2014-06-07 16:00:00")
+    allow(DateTime).to receive(:now) { current_date_time }
+    
+    visit '/'
+    page.should have_content("Location: The Georgia Aquarium")
+  end
+
+  # it 'shows the time of next event' do
+  #   current_date_time = DateTime.parse("2014-06-07 16:00:00")
+  #   allow(DateTime).to receive(:now) { current_date_time }
+    
+  #   visit '/'
+  #   page.should have_content("Start Time: 08:30 PM")
+  # end
 
   #display difference in firefox vs. chrome : so test differs when using selinium/firefox
   #for now verify manually 

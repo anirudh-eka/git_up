@@ -1,11 +1,12 @@
 require 'httparty'
 
 class SchedEvent
-  attr_reader :name, :start_time
+  attr_reader :name, :start_time, :venue
 
-  def initialize(name, start_time)
+  def initialize(name, start_time, venue)
     @name = name
     @start_time = DateTime.parse(start_time)
+    @venue = venue
   end
 
   def before?(time)

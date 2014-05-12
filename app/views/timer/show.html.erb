@@ -2,4 +2,5 @@
 <ul>
 	<li>Current Time: <span id="current-time"><%= DateTime.now.strftime("%l:%M:%S %p")%></span></li>
 	<li>Next Event: <%= @sched_event.name %></li>
+	<li>Location: <%= @sched_event.venue %></li>
 </ul>
