@@ -27,7 +27,7 @@ describe 'home page' do
   end
 
   #need to mock current time in js as well
-  #don't know how easily...
+  #don't know how to do easily...
   xit "shows the time left", :js => true do
     current_date_time = DateTime.parse("2014-06-07 20:25:00")
     allow(DateTime).to receive(:now) { current_date_time }

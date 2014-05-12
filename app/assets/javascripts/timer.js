@@ -57,6 +57,5 @@ function Timer() {
 
 
 function SchedEvent(name, startTime) {
-	//make start time a date object....<----this is where you left off
 	return {name: name, startTime: new Date(startTime)};	
 }
