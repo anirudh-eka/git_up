@@ -1,3 +1,5 @@
 <h1>Welcome to the Away Day Timer!</h1>
-
-Next Event: <%= @sched_event.name %>
+<ul>
+	<li>Current Time: <span id="current-time"><%= DateTime.now.strftime("%l:%M:%S %p")%></span></li>
+	<li>Next Event: <%= @sched_event.name %></li>
+</ul>

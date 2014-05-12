@@ -50,8 +50,7 @@ RSpec.configure do |config|
       ].to_json
 
   config.before(:each) do
-    current_date_time = DateTime.parse("2014-06-07 16:00:00")
-    allow(DateTime).to receive(:now) { current_date_time }
+    
 
     stub_request(:get, /.+naawayday2014.sched.org\/api\/session\/list\?.+/).
          # with(:headers => {'Accept'=>'*/*', 'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3', 'Host'=>'naawayday2014.sched.org', 'User-Agent'=>'Ruby'}).

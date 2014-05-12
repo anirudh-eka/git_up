@@ -7,7 +7,21 @@ describe 'home page' do
   end
 
   it 'shows next event' do 
-  	visit '/'
-  	page.should have_content('Next Event: Dinner')
+    current_date_time = DateTime.parse("2014-06-07 16:00:00")
+    allow(DateTime).to receive(:now) { current_date_time }
+
+    visit '/'
+    page.should have_content('Next Event: Dinner')
+  end
+
+  #display difference in firefox vs. chrome : so test differs when using selinium/firefox
+  #for now verify manually 
+  xit 'displays the current time', :js => true do
+    visit '/'
+    
+    2.times{
+      page.should have_content("Current Time: #{DateTime.now.strftime("%l:%M:%S %p")}")
+      sleep(10.seconds)
+    }
   end
 end

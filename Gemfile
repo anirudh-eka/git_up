@@ -37,6 +37,7 @@ end
 group :test do
   gem 'shoulda-matchers'
   gem 'webmock'
+  gem 'selenium-webdriver'
 end
 
 # Use ActiveModel has_secure_password
