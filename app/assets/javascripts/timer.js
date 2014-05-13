@@ -1,15 +1,27 @@
 $(document).ready(function() {
 	var timer = new Timer();
 	timer.importSchedEvent($("#event-name"), $("#event-start-time").data("datestring"));
+	var timerStatus = new TimerStatus(timer, $("#timer-status"));
 
 	setInterval(function(){
 		timer.updateCurrentTime($("#current-time"));
-		timer.updateTimer($("#time-left"))
+		if(!timer.isZero($("#time-left"))) {
+			timer.updateTimer($("#time-left"))
+		}
 	}, 500)
 });
 
 function Timer() {
 	this.nextEvent;
+
+	this.isZero = function(timerContainer) {
+		if (timerContainer.text() == "0:00:00"){
+			console.log($(this));
+			$(this).trigger("reachedZero");
+			return true;
+		}
+		return false;
+	}
 
 	this.updateTimer = function(timerContainer) {
 		var time = this.nextEvent.startTime - this.getCurrentTime()
@@ -53,6 +65,12 @@ function Timer() {
 	}
 }
 
+function TimerStatus(timer, container) {
+	$(timer).on("reachedZero", function(){
+		container.text("You're Late!");
+		container.addClass("warning-color")
+	});
+}
 
 function SchedEvent(name, startTime) {
 	return {name: name, startTime: new Date(startTime)};	

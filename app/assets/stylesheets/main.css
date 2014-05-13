@@ -31,6 +31,10 @@ section {
 	font-size: 148px;
 }
 
+.warning-color {
+	color: #f83228;
+}
+
 sub {
 	display: block;
 	text-transform: uppercase;

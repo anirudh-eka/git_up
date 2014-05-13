@@ -45,6 +45,23 @@ describe("Timer", function(){
     });
   });
 
+  describe("isZero", function(){
+    describe("when the timer is zero", function(){
+      var timerContainer = {text: function() { return "0:00:00";}}
+
+      it("should return true", function(){
+        expect(timer.isZero(timerContainer)).toEqual(true);
+      });
+
+      it("should trigger an event on itself notify it iz zero");
+    });
+
+    it("should return false if timer is not at zero", function(){
+      var timerContainer = {text: function() { return "0:01:39";}}
+      expect(timer.isZero(timerContainer)).toEqual(false);
+    });
+  });
+
   describe("create schedEvent", function(){
     it("should create the schedEvent", function(){
       //mock event time container
@@ -56,5 +73,24 @@ describe("Timer", function(){
       expect(timer.nextEvent).toEqual(new SchedEvent("Dinner", "2014-06-07 22:30:00"))
     });
   });
+});
 
+describe("TimerStatus", function(){
+  var timerStatus, statusContainer, timer;
+
+  beforeEach(function() {
+    statusContainer = {text: function() {}, addClass: function() {}}
+    timer = {};
+    timerStatus = new TimerStatus(timer, statusContainer);
+  });
+
+  describe("when the timer reaches 0", function(){
+    it("should tell a user that they're late", function(){
+      spyOn(statusContainer, "text")
+      spyOn(statusContainer, "addClass")
+      $(timer).trigger("reachedZero")
+      expect(statusContainer.text).toHaveBeenCalledWith("You're Late!");
+      expect(statusContainer.addClass).toHaveBeenCalledWith("warning-color");
+    });
+  });
 });
