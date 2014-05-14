@@ -1,6 +1,6 @@
 $(document).ready(function() {
 	var timer = new Timer();
-	timer.importSchedEvent($("#event-name"), $("#event-start-time").data("datestring"));
+	timer.setNextEvent($("#event-name").text(), $("#event-start-time").data("datestring"));
 	var timerStatus = new TimerStatus(timer, $("#timer-status"));
 
 	setInterval(function(){
@@ -9,14 +9,19 @@ $(document).ready(function() {
 			timer.updateTimer($("#time-left"))
 		}
 	}, 500)
+
+	setInterval(function(){
+		console.log("every 30 seconds?");
+		timer.importSchedEventFromAJAX();
+	}, 30000)
 });
 
 function Timer() {
+	self = this;
 	this.nextEvent;
 
 	this.isZero = function(timerContainer) {
 		if (timerContainer.text() == "0:00:00"){
-			console.log($(this));
 			$(this).trigger("reachedZero");
 			return true;
 		}
@@ -24,10 +29,12 @@ function Timer() {
 	}
 
 	this.updateTimer = function(timerContainer) {
+		console.log(this.nextEvent.startTime);
 		var time = this.nextEvent.startTime - this.getCurrentTime()
 
 		var diff = new Date(this.nextEvent.startTime - this.getCurrentTime());
 		var formatedDiff = _formatTimerText(time)
+		console.log(formatedDiff);
 		timerContainer.text(formatedDiff);
 	}
 
@@ -40,10 +47,29 @@ function Timer() {
 		return new Date();
 	}
 
-	this.importSchedEvent = function(name, time) {
-		this.nextEvent = new SchedEvent(name.text(), time)
+	this.setNextEvent = function(name, time) {
+		this.nextEvent = new SchedEvent(name, time)
 	}
 
+	this.importSchedEventFromAJAX = function() {
+		var next_event = this.getEvent(_parseJson);
+	}
+
+	this.getEvent = function(callback) {
+		$.ajax({
+			type: "GET",
+	        url: "/",
+	        contentType: "application/json; charset=utf-8",
+	        dataType: "json",
+	        success: callback
+		});
+	}
+
+	function _parseJson(data) {
+		var next_event = data.next_event;
+		console.log(self);
+		self.setNextEvent(next_event.name, next_event.start_time);
+	}
 
 	function _formatTimerText(time) {
 		var formatedTime = Math.floor(time/3600000);

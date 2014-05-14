@@ -62,15 +62,39 @@ describe("Timer", function(){
     });
   });
 
-  describe("create schedEvent", function(){
-    it("should create the schedEvent", function(){
-      //mock event time container
+  describe("manage nextEvent", function(){
+    it("should create a schedEvent", function(){
       var eventTime = "2014-06-07 22:30:00";
-      //mock event name container
-      var eventName = {text: function(){return "Dinner";}}
+      var eventName = "Dinner";
 
-      timer.importSchedEvent(eventName, eventTime)
+      timer.setNextEvent(eventName, eventTime)
       expect(timer.nextEvent).toEqual(new SchedEvent("Dinner", "2014-06-07 22:30:00"))
+    });
+
+    describe("updating nextEvent", function(){
+      it("should get event (from Server) and update nextEvent", function(){
+        spyOn(timer, "getEvent"); 
+        timer.importSchedEventFromAJAX();
+        expect(timer.getEvent).toHaveBeenCalled();
+      });
+
+      it("should update nextEvent with AJAX", function(){
+        var ajaxOptions;
+        spyOn($, "ajax").and.callFake(function(options) {
+          options.success();
+          ajaxOptions = options;
+        });
+
+        var callback = jasmine.createSpy();
+        timer.getEvent(callback);
+      
+        expect(ajaxOptions.type).toEqual("GET");
+        expect(ajaxOptions.url).toEqual("/");
+        expect(ajaxOptions.contentType).toEqual("application/json; charset=utf-8");
+        expect(ajaxOptions.dataType).toEqual("json");
+        //check that success calls callback passed as arg
+        expect(callback).toHaveBeenCalled(); 
+      });
     });
   });
 });
