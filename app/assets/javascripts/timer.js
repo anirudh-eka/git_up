@@ -1,5 +1,5 @@
 $(document).ready(function() {
-	var clock = new Clock();
+	var clock = new Clock($("#current-time"));
 	var timer = new Timer(clock);
 	// timer.setNextEvent($("#event-name").text(), $("#event-start-time").data("datestring"));
 	var timerStatus = new TimerStatus(timer, $("#timer-status"));
@@ -7,7 +7,7 @@ $(document).ready(function() {
 	schedEventService.bootstrapTimerNextEvent($("#event-name"), $("#event-start-time"));
 
 	setInterval(function(){
-		timer.updateCurrentTime($("#current-time"));
+		clock.updateCurrentTime();
 		if(!timer.isZero($("#time-left"))) {
 			timer.updateTimer($("#time-left"))
 		}
@@ -19,9 +19,14 @@ $(document).ready(function() {
 	}, 30000)
 });
 
-function Clock() {
+function Clock(timeContainer) {
 	this.getCurrentTime = function() {
 		return new Date();
+	}
+
+	this.updateCurrentTime = function() {
+		var currentTime = this.getCurrentTime().toLocaleTimeString()
+		timeContainer.text(currentTime);
 	}
 
 }
@@ -41,19 +46,8 @@ function Timer(clock) {
 	this.updateTimer = function(timerContainer) {
 		// console.log(this.nextEvent)
 		var time = this.nextEvent.startTime - clock.getCurrentTime()
-
-		var diff = new Date(this.nextEvent.startTime - this.getCurrentTime());
 		var formatedDiff = _formatTimerText(time)
 		timerContainer.text(formatedDiff);
-	}
-
-	this.updateCurrentTime = function(timeContainer) {
-		var currentTime = (new Date).toLocaleTimeString()
-		timeContainer.text(currentTime)
-	}
-
-	this.getCurrentTime = function() {
-		return new Date();
 	}
 
 	this.setNextEvent = function(schedEvent) {

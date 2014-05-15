@@ -11,10 +11,23 @@ describe("SchedEvent", function() {
 });
 
 describe("Clock", function() {
+  var clock, timerContainer;
+
+  beforeEach(function() {
+    timerContainer = {text: function(){}};
+    clock = new Clock(timerContainer);
+  });
+
   it("should return current time (as a Date object)", function(){
-    var clock = new Clock();
     expect(clock.getCurrentTime()).toEqual(new Date());
   });
+
+  it("should update currentTime in DOM", function(){
+    spyOn(timerContainer, "text");
+    var currentTimeString = (new Date()).toLocaleTimeString();
+    clock.updateCurrentTime();
+    expect(timerContainer.text).toHaveBeenCalledWith(currentTimeString);
+  })
 });
 
 describe("Timer", function(){
@@ -24,12 +37,6 @@ describe("Timer", function(){
     clock = new Clock();
     timer = new Timer(clock);
   });
-
-  describe("getCurrentTime", function(){
-    it("should return a Date object reflecting the current time", function(){
-      expect(timer.getCurrentTime()).toEqual(new Date());
-    });
-  })
 
   describe("updateTimer", function(){
     it("should subtract the current time with the event time", function(){
