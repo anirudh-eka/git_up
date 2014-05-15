@@ -1,7 +1,9 @@
 $(document).ready(function() {
 	var timer = new Timer();
-	timer.setNextEvent($("#event-name").text(), $("#event-start-time").data("datestring"));
+	// timer.setNextEvent($("#event-name").text(), $("#event-start-time").data("datestring"));
 	var timerStatus = new TimerStatus(timer, $("#timer-status"));
+	var schedEventService = new SchedEventService(timer);
+	schedEventService.bootstrapTimerNextEvent($("#event-name"), $("#event-start-time"));
 
 	setInterval(function(){
 		timer.updateCurrentTime($("#current-time"));
@@ -11,8 +13,8 @@ $(document).ready(function() {
 	}, 500)
 
 	setInterval(function(){
-		console.log("every 30 seconds?");
-		timer.importSchedEventFromAJAX();
+		schedEventService.updateTimerNextEvent();
+		// timer.importSchedEventFromAJAX();
 	}, 30000)
 });
 
@@ -29,12 +31,11 @@ function Timer() {
 	}
 
 	this.updateTimer = function(timerContainer) {
-		console.log(this.nextEvent.startTime);
+		// console.log(this.nextEvent)
 		var time = this.nextEvent.startTime - this.getCurrentTime()
 
 		var diff = new Date(this.nextEvent.startTime - this.getCurrentTime());
 		var formatedDiff = _formatTimerText(time)
-		console.log(formatedDiff);
 		timerContainer.text(formatedDiff);
 	}
 
@@ -47,8 +48,8 @@ function Timer() {
 		return new Date();
 	}
 
-	this.setNextEvent = function(name, time) {
-		this.nextEvent = new SchedEvent(name, time)
+	this.setNextEvent = function(schedEvent) {
+		this.nextEvent = schedEvent;
 	}
 
 	this.importSchedEventFromAJAX = function() {
@@ -67,7 +68,6 @@ function Timer() {
 
 	function _parseJson(data) {
 		var next_event = data.next_event;
-		console.log(self);
 		self.setNextEvent(next_event.name, next_event.start_time);
 	}
 
@@ -88,6 +88,35 @@ function Timer() {
 		} else {
 			return number;
 		}
+	}
+}
+
+function SchedEventService(timer) {
+	this.bootstrapTimerNextEvent = function($eventNameElement, $eventStartElement) {
+		var name = $eventNameElement.text();
+		var	startTime = $eventStartElement.data("datestring");
+
+		timer.setNextEvent(new SchedEvent(name, startTime));
+	}
+
+	this.getEvent = function(callback) {
+		$.ajax({
+			type: "GET",
+	        url: "/",
+	        contentType: "application/json; charset=utf-8",
+	        dataType: "json",
+	        success: callback
+		});
+	}
+
+	this._parseJsonAndSetTimerNextEvent = function(data) {
+		var nextEventJson = data.next_event;
+		var nextEvent = new SchedEvent(nextEventJson.name, nextEventJson.start_time)
+		timer.setNextEvent(nextEvent);
+	}
+
+	this.updateTimerNextEvent = function() {
+		this.getEvent(this._parseJsonAndSetTimerNextEvent);
 	}
 }
 

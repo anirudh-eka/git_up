@@ -64,12 +64,15 @@ describe 'home page' do
                       {:status => 200, :body => response_two, :headers => {'content-type' => 'application/json'}})
       end 
 
-      it "should update timer", :js => true do
+      it "should update timer and event details", :js => true do
         visit '/'
 
         page.should have_content("0:03:55")
         sleep(30.seconds)
-        page.should have_content("0:19:25")
+        page.should have_content("0:19:")
+        # page.should have_content("Next Event: Dinner")
+        # page.should have_content("Location: The Georgia Aquarium")
+        # page.should have_content("Time: #{twenty_minutes_before_now.strftime("%l:%M %p")}")
       end
     end
 

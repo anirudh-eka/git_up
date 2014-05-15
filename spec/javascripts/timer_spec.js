@@ -62,39 +62,93 @@ describe("Timer", function(){
     });
   });
 
-  describe("manage nextEvent", function(){
-    it("should create a schedEvent", function(){
-      var eventTime = "2014-06-07 22:30:00";
-      var eventName = "Dinner";
+  it("should set a schedEvent", function(){
+    var schedEvent = new SchedEvent("Dinner", "2014-06-07 22:30:00")
 
-      timer.setNextEvent(eventName, eventTime)
-      expect(timer.nextEvent).toEqual(new SchedEvent("Dinner", "2014-06-07 22:30:00"))
+    timer.setNextEvent(schedEvent)
+    expect(timer.nextEvent).toBe(schedEvent)
+  });
+
+  describe("updating nextEvent", function(){
+    it("should get event (from Server) and update nextEvent", function(){
+      spyOn(timer, "getEvent"); 
+      timer.importSchedEventFromAJAX();
+      expect(timer.getEvent).toHaveBeenCalled();
     });
 
-    describe("updating nextEvent", function(){
-      it("should get event (from Server) and update nextEvent", function(){
-        spyOn(timer, "getEvent"); 
-        timer.importSchedEventFromAJAX();
-        expect(timer.getEvent).toHaveBeenCalled();
+    it("should update nextEvent with AJAX", function(){
+      var ajaxOptions;
+      spyOn($, "ajax").and.callFake(function(options) {
+        options.success();
+        ajaxOptions = options;
       });
 
-      it("should update nextEvent with AJAX", function(){
-        var ajaxOptions;
-        spyOn($, "ajax").and.callFake(function(options) {
-          options.success();
-          ajaxOptions = options;
-        });
+      var callback = jasmine.createSpy();
+      timer.getEvent(callback);
+    
+      expect(ajaxOptions.type).toEqual("GET");
+      expect(ajaxOptions.url).toEqual("/");
+      expect(ajaxOptions.contentType).toEqual("application/json; charset=utf-8");
+      expect(ajaxOptions.dataType).toEqual("json");
+      //check that success calls callback passed as arg
+      expect(callback).toHaveBeenCalled(); 
+    });
+  });
+});
 
-        var callback = jasmine.createSpy();
-        timer.getEvent(callback);
-      
-        expect(ajaxOptions.type).toEqual("GET");
-        expect(ajaxOptions.url).toEqual("/");
-        expect(ajaxOptions.contentType).toEqual("application/json; charset=utf-8");
-        expect(ajaxOptions.dataType).toEqual("json");
-        //check that success calls callback passed as arg
-        expect(callback).toHaveBeenCalled(); 
+describe("SchedEventService", function(){
+  var timer, service
+
+  beforeEach(function() {
+    timer = {setNextEvent: function(){}};
+    service = new SchedEventService(timer);
+  });
+
+  it("should bootstrap nextEvent from DOM data", function(){
+    spyOn(timer, "setNextEvent"); 
+    var eventNameDOMElement = {text: function() {return "name";}} 
+    var eventStartDOMElement = {data: function() {}} 
+    spyOn(eventStartDOMElement, "data").and.returnValue("2014-06-07 22:30:00");
+
+    service.bootstrapTimerNextEvent(eventNameDOMElement, eventStartDOMElement);
+    
+    var schedEvent = new SchedEvent("name", "2014-06-07 22:30:00");
+    expect(eventStartDOMElement.data).toHaveBeenCalledWith("datestring");
+    expect(timer.setNextEvent).toHaveBeenCalledWith(schedEvent);
+  });
+
+  describe("updating nextEvent", function(){
+    it("should get event (from Server) and update nextEvent", function(){
+      var event = jasmine.createSpy('schedEvent')
+      spyOn(service, "getEvent").and.returnValue(event);
+      service.updateTimerNextEvent();
+      expect(service.getEvent).toHaveBeenCalledWith(service._parseJsonAndSetTimerNextEvent);
+    });
+
+    it("should get nextEvent with AJAX", function(){
+      var ajaxOptions;
+      spyOn($, "ajax").and.callFake(function(options) {
+        options.success();
+        ajaxOptions = options;
       });
+
+      var callback = jasmine.createSpy();
+      service.getEvent(callback);
+    
+      expect(ajaxOptions.type).toEqual("GET");
+      expect(ajaxOptions.url).toEqual("/");
+      expect(ajaxOptions.contentType).toEqual("application/json; charset=utf-8");
+      expect(ajaxOptions.dataType).toEqual("json");
+      //check that success calls callback passed as arg
+      expect(callback).toHaveBeenCalled(); 
+    });
+
+    it("should parse Json and set timer next event", function(){
+      var data = {next_event: {name: "Dinner", start_time: "2014-06-07 22:30:00"}}
+      spyOn(timer, "setNextEvent");
+      var schedEvent = new SchedEvent("Dinner", "2014-06-07 22:30:00");
+      service._parseJsonAndSetTimerNextEvent(data);
+      expect(timer.setNextEvent).toHaveBeenCalledWith(schedEvent);
     });
   });
 });
