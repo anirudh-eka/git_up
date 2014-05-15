@@ -42,7 +42,6 @@ function Timer(clock) {
 	}
 
 	this.updateTimer = function(timerContainer) {
-		// console.log(this.nextEvent)
 		var time = this.nextEvent.startTime - clock.getCurrentTime()
 		var formatedDiff = _formatTimerText(time)
 		timerContainer.text(formatedDiff);
