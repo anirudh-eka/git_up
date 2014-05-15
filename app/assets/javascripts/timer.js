@@ -1,7 +1,6 @@
 $(document).ready(function() {
 	var clock = new Clock($("#current-time"));
 	var timer = new Timer(clock);
-	// timer.setNextEvent($("#event-name").text(), $("#event-start-time").data("datestring"));
 	var timerStatus = new TimerStatus(timer, $("#timer-status"));
 	var schedEventService = new SchedEventService(timer);
 	schedEventService.bootstrapTimerNextEvent($("#event-name"), $("#event-start-time"));
@@ -15,7 +14,6 @@ $(document).ready(function() {
 
 	setInterval(function(){
 		schedEventService.updateTimerNextEvent();
-		// timer.importSchedEventFromAJAX();
 	}, 30000)
 });
 
