@@ -1,5 +1,6 @@
 $(document).ready(function() {
-	var timer = new Timer();
+	var clock = new Clock();
+	var timer = new Timer(clock);
 	// timer.setNextEvent($("#event-name").text(), $("#event-start-time").data("datestring"));
 	var timerStatus = new TimerStatus(timer, $("#timer-status"));
 	var schedEventService = new SchedEventService(timer);
@@ -18,7 +19,14 @@ $(document).ready(function() {
 	}, 30000)
 });
 
-function Timer() {
+function Clock() {
+	this.getCurrentTime = function() {
+		return new Date();
+	}
+
+}
+
+function Timer(clock) {
 	self = this;
 	this.nextEvent;
 
@@ -32,7 +40,7 @@ function Timer() {
 
 	this.updateTimer = function(timerContainer) {
 		// console.log(this.nextEvent)
-		var time = this.nextEvent.startTime - this.getCurrentTime()
+		var time = this.nextEvent.startTime - clock.getCurrentTime()
 
 		var diff = new Date(this.nextEvent.startTime - this.getCurrentTime());
 		var formatedDiff = _formatTimerText(time)
@@ -50,25 +58,6 @@ function Timer() {
 
 	this.setNextEvent = function(schedEvent) {
 		this.nextEvent = schedEvent;
-	}
-
-	this.importSchedEventFromAJAX = function() {
-		var next_event = this.getEvent(_parseJson);
-	}
-
-	this.getEvent = function(callback) {
-		$.ajax({
-			type: "GET",
-	        url: "/",
-	        contentType: "application/json; charset=utf-8",
-	        dataType: "json",
-	        success: callback
-		});
-	}
-
-	function _parseJson(data) {
-		var next_event = data.next_event;
-		self.setNextEvent(next_event.name, next_event.start_time);
 	}
 
 	function _formatTimerText(time) {

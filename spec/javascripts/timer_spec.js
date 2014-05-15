@@ -10,11 +10,19 @@ describe("SchedEvent", function() {
   });
 });
 
+describe("Clock", function() {
+  it("should return current time (as a Date object)", function(){
+    var clock = new Clock();
+    expect(clock.getCurrentTime()).toEqual(new Date());
+  });
+});
+
 describe("Timer", function(){
-  var timer = new Timer();
+  var timer, clock;
 
   beforeEach(function() {
-    timer = new Timer();
+    clock = new Clock();
+    timer = new Timer(clock);
   });
 
   describe("getCurrentTime", function(){
@@ -27,7 +35,7 @@ describe("Timer", function(){
     it("should subtract the current time with the event time", function(){
       //mock current time
       var currentTime = new Date("2014-06-07 21:25:00")
-      spyOn(timer, 'getCurrentTime').and.returnValue(currentTime)
+      spyOn(clock, 'getCurrentTime').and.returnValue(currentTime)
 
       //set next event
       timer.nextEvent = new SchedEvent("Dinner", "2014-06-07 22:30:00")
@@ -67,32 +75,6 @@ describe("Timer", function(){
 
     timer.setNextEvent(schedEvent)
     expect(timer.nextEvent).toBe(schedEvent)
-  });
-
-  describe("updating nextEvent", function(){
-    it("should get event (from Server) and update nextEvent", function(){
-      spyOn(timer, "getEvent"); 
-      timer.importSchedEventFromAJAX();
-      expect(timer.getEvent).toHaveBeenCalled();
-    });
-
-    it("should update nextEvent with AJAX", function(){
-      var ajaxOptions;
-      spyOn($, "ajax").and.callFake(function(options) {
-        options.success();
-        ajaxOptions = options;
-      });
-
-      var callback = jasmine.createSpy();
-      timer.getEvent(callback);
-    
-      expect(ajaxOptions.type).toEqual("GET");
-      expect(ajaxOptions.url).toEqual("/");
-      expect(ajaxOptions.contentType).toEqual("application/json; charset=utf-8");
-      expect(ajaxOptions.dataType).toEqual("json");
-      //check that success calls callback passed as arg
-      expect(callback).toHaveBeenCalled(); 
-    });
   });
 });
 
