@@ -1,12 +1,24 @@
 describe("SchedEvent", function() {
+  var schedEvent;
+
+  beforeEach(function(){
+    schedEvent = new SchedEvent("Birthday", "2014-06-07 22:30:00", "On A Boat", "10:30 PM");
+  });
+
   it("has a name", function() {
-    var schedEvent = new SchedEvent("Birthdays", "2014-06-07 22:30:00");
-    expect(schedEvent.name).toBe("Birthdays");
+    expect(schedEvent.name).toBe("Birthday");
   });
 
   it("has a start time", function(){
-    var schedEvent = new SchedEvent("Birthdays", "2014-06-07 22:30:00");
     expect(schedEvent.startTime).toEqual(new Date("2014-06-07 22:30:00"));
+  });
+
+  it("has a venue", function(){
+    expect(schedEvent.venue).toEqual("On A Boat");
+  });
+
+  it("has a formatted start time", function(){
+    expect(schedEvent.formattedStartTime).toEqual("10:30 PM");
   });
 });
 
@@ -45,7 +57,7 @@ describe("Timer", function(){
       spyOn(clock, 'getCurrentTime').and.returnValue(currentTime)
 
       //set next event
-      timer.nextEvent = new SchedEvent("Dinner", "2014-06-07 22:30:00")
+      timer.nextEvent = new SchedEvent("Dinner", "2014-06-07 22:30:00", "On A Boat", "10:30 PM")
 
       //send a mock of the timeContainer as arg
       var timerContainer = {text: function() {}}
@@ -78,7 +90,7 @@ describe("Timer", function(){
   });
 
   it("should set a schedEvent", function(){
-    var schedEvent = new SchedEvent("Dinner", "2014-06-07 22:30:00")
+    var schedEvent = new SchedEvent("Dinner", "2014-06-07 22:30:00", "On A Boat!", "10:30 PM")
 
     timer.setNextEvent(schedEvent)
     expect(timer.nextEvent).toBe(schedEvent)
@@ -96,12 +108,14 @@ describe("SchedEventService", function(){
   it("should bootstrap nextEvent from DOM data", function(){
     spyOn(timer, "setNextEvent"); 
     var eventNameDOMElement = {text: function() {return "name";}} 
-    var eventStartDOMElement = {data: function() {}} 
+    var eventStartDOMElement = {data: function() {}, text: function(){return "10:30 PM";}} 
+    var eventVenueDOMElement = {text: function() {return "On A Boat!"}}
+
     spyOn(eventStartDOMElement, "data").and.returnValue("2014-06-07 22:30:00");
 
-    service.bootstrapTimerNextEvent(eventNameDOMElement, eventStartDOMElement);
+    service.bootstrapTimerNextEvent(eventNameDOMElement, eventStartDOMElement, eventVenueDOMElement);
     
-    var schedEvent = new SchedEvent("name", "2014-06-07 22:30:00");
+    var schedEvent = new SchedEvent("name", "2014-06-07 22:30:00", "On A Boat!", "10:30 PM");
     expect(eventStartDOMElement.data).toHaveBeenCalledWith("datestring");
     expect(timer.setNextEvent).toHaveBeenCalledWith(schedEvent);
   });
@@ -133,9 +147,9 @@ describe("SchedEventService", function(){
     });
 
     it("should parse Json and set timer next event", function(){
-      var data = {next_event: {name: "Dinner", start_time: "2014-06-07 22:30:00"}}
+      var data = {next_event: {name: "Dinner", start_time: "2014-06-07 22:30:00", venue: "On A Boat!", formatted_time: "10:30 PM"}}
       spyOn(timer, "setNextEvent");
-      var schedEvent = new SchedEvent("Dinner", "2014-06-07 22:30:00");
+      var schedEvent = new SchedEvent("Dinner", "2014-06-07 22:30:00", "On A Boat!", "10:30 PM");
       service._parseJsonAndSetTimerNextEvent(data);
       expect(timer.setNextEvent).toHaveBeenCalledWith(schedEvent);
     });
@@ -158,6 +172,29 @@ describe("TimerStatus", function(){
       $(timer).trigger("reachedZero")
       expect(statusContainer.text).toHaveBeenCalledWith("You're Late!");
       expect(statusContainer.addClass).toHaveBeenCalledWith("warning-color");
+    });
+  });
+});
+
+describe("NextEventDetails", function(){
+  describe("when SchedEventService successfully imports new data", function(){
+    it("should update the details", function() {
+      var nameContainer = {text: function(){}};
+      var venueContainer = {text: function(){}};
+      var timeContainer = {text: function(){}};
+      spyOn(nameContainer, "text");
+      spyOn(venueContainer, "text");
+      spyOn(timeContainer, "text");
+
+      var service = new SchedEventService();
+      var nextEventDetails = new NextEventDetails(service, nameContainer, timeContainer, venueContainer);
+      var changedEvent = new SchedEvent("Dinner", "2014-06-07 22:30:00", "On A Boat!", "10:30 PM")
+
+      $(service).trigger("nextEventUpdate", changedEvent);
+      
+      expect(nameContainer.text).toHaveBeenCalledWith("Dinner");
+      expect(timeContainer.text).toHaveBeenCalledWith("10:30 PM");
+      expect(venueContainer.text).toHaveBeenCalledWith("On A Boat!");
     });
   });
 });

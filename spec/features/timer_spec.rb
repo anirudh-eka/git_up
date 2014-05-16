@@ -48,7 +48,7 @@ describe 'home page' do
     end
     
     context "when events change in sched" do
-      before(:each) do 
+      it "should update timer and event details", :js => true do 
         Capybara.default_wait_time = 10
         four_minutes_before_now = DateTime.now + Rational(4, MINUTES_IN_A_DAY)
         twenty_minutes_before_now = DateTime.now + Rational(20, MINUTES_IN_A_DAY)
@@ -61,18 +61,16 @@ describe 'home page' do
 
         stub_request(:get, /.+naawayday2014.sched.org\/api\/session\/list\?.+/).
              to_return({:status => 200, :body => response_one, :headers => {'content-type' => 'application/json'}},
-                      {:status => 200, :body => response_two, :headers => {'content-type' => 'application/json'}})
-      end 
-
-      it "should update timer and event details", :js => true do
+                      {:status => 200, :body => response_two, :headers => {'content-type' => 'application/json'}}) 
+        
         visit '/'
 
         page.should have_content("0:03:55")
         sleep(30.seconds)
         page.should have_content("0:19:")
-        # page.should have_content("Next Event: Dinner")
-        # page.should have_content("Location: The Georgia Aquarium")
-        # page.should have_content("Time: #{twenty_minutes_before_now.strftime("%l:%M %p")}")
+        page.should have_content("Next Event: Dinner")
+        page.should have_content("Location: The Georgia Aquarium")
+        page.should have_content("Time: #{twenty_minutes_before_now.strftime("%l:%M %p")}")
       end
     end
 

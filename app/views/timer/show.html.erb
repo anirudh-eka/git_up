@@ -11,7 +11,7 @@
 <section class="next-event-details">
 	<ul>
 		<li><strong>Next Event:</strong> <span id="event-name"><%= @sched_event.name %></li>
-		<li><strong>Location:</strong> <%= @sched_event.venue %></li>
+		<li><strong>Location:</strong> <span id="event-venue"> <%= @sched_event.venue %></span></li>
 		<li><strong>Start Time:</strong> <span id="event-start-time" data-datestring="<%= @sched_event.start_time%>">
 				<%= @sched_event.start_time.strftime("%l:%M %p") %>
 			</span></li>
