@@ -100,26 +100,30 @@ describe 'home page' do
         page.should have_content("Next Event: Lunch")
       end
 
-      # context "20 minutes before the next event" do
-      #   it "resets the count down", :js => true do
-      #     four_seconds_before_now = DateTime.now + Rational(4, SECONDS_IN_A_DAY)
-      #     twenty_minutes_and_six_seconds_before_now = DateTime.now + Rational(1206, SECONDS_IN_A_DAY)
-      #     response = [
-      #       {"name"=>"Lunch", "event_start"=>"#{four_seconds_before_now}", "venue" => "The Westin Peachtree Plaza"},
-      #       {"name"=>"Dinner", "event_start"=>"#{twenty_minutes_and_six_seconds_before_now}", "venue" => "The Georgia Aquarium"}
-      #     ].to_json
-          
-      #   stub_request(:get, /.+naawayday2014.sched.org\/api\/session\/list\?.+/).
-      #        to_return(:status => 200, :body => response, :headers => {'content-type' => 'application/json'})
+      context "20 minutes before the next event" do
+        it "resets the count down", :js => true do
+          four_seconds_before_now = DateTime.now + Rational(4, SECONDS_IN_A_DAY)
+          twenty_minutes_and_six_seconds_before_now = DateTime.now + Rational(1206, SECONDS_IN_A_DAY)
+          response = [
+            {"name"=>"Lunch", "event_start"=>"#{four_seconds_before_now}", "venue" => "The Westin Peachtree Plaza"},
+            {"name"=>"Dinner", "event_start"=>"#{twenty_minutes_and_six_seconds_before_now}", "venue" => "The Georgia Aquarium"}
+          ].to_json
 
-      #     visit '/'
-      #     page.should have_content("0:00:00")
-      #     page.should have_content("YOU'RE LATE!")
-      #     sleep(30.seconds)
-      #     page.should have_content("0:19:")
-      #     page.should have_content("UNTIL NEXT EVENT")
-      #   end
-      # end
+          stub_request(:get, /.+naawayday2014.sched.org\/api\/session\/list\?.+/).
+             to_return(:status => 200, :body => response, :headers => {'content-type' => 'application/json'})
+
+          visit '/'
+          page.should have_content("0:00:00")
+          page.should have_content("YOU'RE LATE!")
+          page.should have_content("Lunch")
+          page.should have_content("The Westin Peachtree Plaza")
+          sleep(30.seconds)
+          # page.should have_content("0:19:")
+          # page.should have_content("UNTIL NEXT EVENT")
+          page.should have_content("Dinner")
+          page.should have_content("The Georgia Aquarium")
+        end
+      end
     end
     #display difference in firefox vs. chrome : so test differs when using selinium/firefox
     #for now verify manually 

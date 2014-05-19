@@ -221,22 +221,38 @@ describe("NextEventDetails", function(){
         expect(timeContainer.text).toHaveBeenCalledWith("10:30 PM");
         expect(venueContainer.text).toHaveBeenCalledWith("On A Boat!");
       });
+    });
+    describe("when timer is zero", function(){
+      it("should not update the details", function(){  
+        spyOn(nameContainer, "text");
+        spyOn(venueContainer, "text");
+        spyOn(timeContainer, "text");
+        spyOn(timer, "isZero").and.returnValue(true);
 
-      describe("when timer is zero", function(){
-        it("should not update the details", function(){  
-          spyOn(nameContainer, "text");
-          spyOn(venueContainer, "text");
-          spyOn(timeContainer, "text");
-          spyOn(timer, "isZero").and.returnValue(true);
+        var aLongTime
+        var changedEvent = new SchedEvent("Dinner", "2014-06-07 22:30:00", "On A Boat!", "10:30 PM")
 
-          var changedEvent = new SchedEvent("Dinner", "2014-06-07 22:30:00", "On A Boat!", "10:30 PM")
+        $(service).trigger("nextEventUpdate", changedEvent);
+        
+        expect(nameContainer.text).not.toHaveBeenCalled();
+        expect(timeContainer.text).not.toHaveBeenCalled();
+        expect(venueContainer.text).not.toHaveBeenCalled();
+      });
 
-          $(service).trigger("nextEventUpdate", changedEvent);
-          
-          expect(nameContainer.text).not.toHaveBeenCalled();
-          expect(timeContainer.text).not.toHaveBeenCalled();
-          expect(venueContainer.text).not.toHaveBeenCalled();
-          });
+      it("should update the details if nextEvent is in 20 min or less", function(){  
+        spyOn(nameContainer, "text");
+        spyOn(venueContainer, "text");
+        spyOn(timeContainer, "text");
+        spyOn(timer, "isZero").and.returnValue(true);
+
+        var nineteenMinutes = 19*60000
+        var changedEvent = new SchedEvent("Dinner", new Date().getTime() + nineteenMinutes, "On A Boat in Desert!", "10:30 PM")
+
+        $(service).trigger("nextEventUpdate", changedEvent);
+        
+        expect(nameContainer.text).toHaveBeenCalledWith("Dinner");
+        expect(timeContainer.text).toHaveBeenCalledWith("10:30 PM");
+        expect(venueContainer.text).toHaveBeenCalledWith("On A Boat in Desert!");
       });
     });
   });

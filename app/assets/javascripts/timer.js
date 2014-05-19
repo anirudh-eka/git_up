@@ -77,7 +77,7 @@ function Timer(clock, service, timerContainer) {
 	}
 }
 
-function SchedEventService(timer) {
+function SchedEventService() {
 	var self = this;
 
 	this.bootstrapTimerNextEvent = function($eventNameElement, $eventStartElement, $venueElement) {
@@ -120,12 +120,19 @@ function TimerStatus(timer, container) {
 
 function NextEventDetails(service, timer, $name, $time, $venue) {
 	$(service).on("nextEventUpdate", function(e, schedEvent){
-		if (!(timer.isZero())) {
+		console.log("heard nextEventUpdate");
+		var minTillNextEvent = (schedEvent.startTime - new Date())/60000;
+		console.log(minTillNextEvent);
+		if (!timer.isZero() || (timer.isZero() && minTillNextEvent <= 20)) {
+			console.log("actually update");
+
 			$name.text(schedEvent.name);
 			$time.text(schedEvent.formattedStartTime);
 			$venue.text(schedEvent.venue);
 		}
 	});
+
+	// timerIsNotZero || (timerIsZero && TimeTillNextEvent
 }
 
 function SchedEvent(name, startTime, venue, formattedStartTime) {
