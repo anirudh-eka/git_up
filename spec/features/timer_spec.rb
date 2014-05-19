@@ -108,12 +108,15 @@ describe 'home page' do
       #       {"name"=>"Lunch", "event_start"=>"#{four_seconds_before_now}", "venue" => "The Westin Peachtree Plaza"},
       #       {"name"=>"Dinner", "event_start"=>"#{twenty_minutes_and_six_seconds_before_now}", "venue" => "The Georgia Aquarium"}
       #     ].to_json
+          
+      #   stub_request(:get, /.+naawayday2014.sched.org\/api\/session\/list\?.+/).
+      #        to_return(:status => 200, :body => response, :headers => {'content-type' => 'application/json'})
 
       #     visit '/'
       #     page.should have_content("0:00:00")
       #     page.should have_content("YOU'RE LATE!")
       #     sleep(30.seconds)
-      #     page.should have_content("0:19:25")
+      #     page.should have_content("0:19:")
       #     page.should have_content("UNTIL NEXT EVENT")
       #   end
       # end

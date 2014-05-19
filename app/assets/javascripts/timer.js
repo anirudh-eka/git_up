@@ -1,10 +1,9 @@
 $(document).ready(function() {
+	var service = new SchedEventService();
 	var clock = new Clock($("#current-time"));
-	var timer = new Timer(clock,$("#time-left"));
+	var timer = new Timer(clock, service, $("#time-left"));
 	var timerStatus = new TimerStatus(timer, $("#timer-status"));
-	var service = new SchedEventService(timer);
 	var eventDetails = new NextEventDetails(service, timer, $("#event-name"), $("#event-start-time"), $("#event-venue"));
-
 	service.bootstrapTimerNextEvent($("#event-name"), $("#event-start-time"), $("#event-venue"));
 
 	setInterval(function(){
@@ -32,7 +31,8 @@ function Clock(timeContainer) {
 
 }
 
-function Timer(clock, timerContainer) {
+function Timer(clock, service, timerContainer) {
+	var self = this;
 	this.nextEvent;
 
 	this.isZero = function() {
@@ -52,6 +52,10 @@ function Timer(clock, timerContainer) {
 	this.setNextEvent = function(schedEvent) {
 		this.nextEvent = schedEvent;
 	}
+
+	$(service).on("nextEventUpdate", function(e, schedEvent){
+		self.setNextEvent(schedEvent);
+	});
 
 	function _formatTimerText(time) {
 		var formattedTime = Math.floor(time/3600000);
@@ -82,7 +86,8 @@ function SchedEventService(timer) {
 		var venue = $venueElement.text();
 		var formattedStartTime = $eventStartElement.text();
 
-		timer.setNextEvent(new SchedEvent(name, startTime, venue, formattedStartTime));
+		var nextEvent = new SchedEvent(name, startTime, venue, formattedStartTime);
+		$(self).trigger("nextEventUpdate", nextEvent);
 	}
 
 	this.getEvent = function(callback) {
@@ -95,15 +100,14 @@ function SchedEventService(timer) {
 		});
 	}
 
-	this._parseJsonAndSetTimerNextEvent = function(data) {
+	this._parseJsonAndPublishNextEvent = function(data) {
 		var nextEventJson = data.next_event;
-		var nextEvent = new SchedEvent(nextEventJson.name, nextEventJson.start_time, nextEventJson.venue, nextEventJson.formatted_time)
-		timer.setNextEvent(nextEvent);
+		var nextEvent = new SchedEvent(nextEventJson.name, nextEventJson.start_time, nextEventJson.venue, nextEventJson.formatted_time);
 		$(self).trigger("nextEventUpdate", nextEvent);
 	}
 
 	this.updateTimerNextEvent = function() {
-		this.getEvent(this._parseJsonAndSetTimerNextEvent);
+		this.getEvent(this._parseJsonAndPublishNextEvent);
 	}
 }
 
