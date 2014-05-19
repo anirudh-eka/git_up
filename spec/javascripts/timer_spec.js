@@ -43,11 +43,12 @@ describe("Clock", function() {
 });
 
 describe("Timer", function(){
-  var timer, clock;
+  var timer, clock, timerContainer;
 
   beforeEach(function() {
     clock = new Clock();
-    timer = new Timer(clock);
+    timerContainer = {text: function() { return "0:00:00";}}
+    timer = new Timer(clock, timerContainer);
   });
 
   describe("updateTimer", function(){
@@ -60,7 +61,7 @@ describe("Timer", function(){
       timer.nextEvent = new SchedEvent("Dinner", "2014-06-07 22:30:00", "On A Boat", "10:30 PM")
 
       //send a mock of the timeContainer as arg
-      var timerContainer = {text: function() {}}
+      // var timerContainer = {text: function() {}}
 
       //spyOn text to verify
       spyOn(timerContainer, 'text');
@@ -74,8 +75,6 @@ describe("Timer", function(){
 
   describe("isZero", function(){
     describe("when the timer is zero", function(){
-      var timerContainer = {text: function() { return "0:00:00";}}
-
       it("should return true", function(){
         expect(timer.isZero(timerContainer)).toEqual(true);
       });
@@ -84,7 +83,7 @@ describe("Timer", function(){
     });
 
     it("should return false if timer is not at zero", function(){
-      var timerContainer = {text: function() { return "0:01:39";}}
+      timerContainer.text = function() { return "0:01:39";}
       expect(timer.isZero(timerContainer)).toEqual(false);
     });
   });
@@ -178,23 +177,48 @@ describe("TimerStatus", function(){
 
 describe("NextEventDetails", function(){
   describe("when SchedEventService successfully imports new data", function(){
-    it("should update the details", function() {
-      var nameContainer = {text: function(){}};
-      var venueContainer = {text: function(){}};
-      var timeContainer = {text: function(){}};
-      spyOn(nameContainer, "text");
-      spyOn(venueContainer, "text");
-      spyOn(timeContainer, "text");
+    var nameContainer, venueContainer, timeContainer, timer, service, nextEventDetails;
+    beforeEach(function(){
+      nameContainer = {text: function(){}};
+      venueContainer = {text: function(){}};
+      timeContainer = {text: function(){}};
+      timer = {isZero: function(){}};
+      service = new SchedEventService();
+      nextEventDetails = new NextEventDetails(service, timer, nameContainer, timeContainer, venueContainer);
+    });
 
-      var service = new SchedEventService();
-      var nextEventDetails = new NextEventDetails(service, nameContainer, timeContainer, venueContainer);
-      var changedEvent = new SchedEvent("Dinner", "2014-06-07 22:30:00", "On A Boat!", "10:30 PM")
+    describe("when timer is not zero", function(){
+      it("should update the details", function() {
+        spyOn(nameContainer, "text");
+        spyOn(venueContainer, "text");
+        spyOn(timeContainer, "text");
+        spyOn(timer, "isZero").and.returnValue(false);
 
-      $(service).trigger("nextEventUpdate", changedEvent);
-      
-      expect(nameContainer.text).toHaveBeenCalledWith("Dinner");
-      expect(timeContainer.text).toHaveBeenCalledWith("10:30 PM");
-      expect(venueContainer.text).toHaveBeenCalledWith("On A Boat!");
+        var changedEvent = new SchedEvent("Dinner", "2014-06-07 22:30:00", "On A Boat!", "10:30 PM")
+
+        $(service).trigger("nextEventUpdate", changedEvent);
+        
+        expect(nameContainer.text).toHaveBeenCalledWith("Dinner");
+        expect(timeContainer.text).toHaveBeenCalledWith("10:30 PM");
+        expect(venueContainer.text).toHaveBeenCalledWith("On A Boat!");
+      });
+
+      describe("when timer is zero", function(){
+        it("should not update the details", function(){  
+          spyOn(nameContainer, "text");
+          spyOn(venueContainer, "text");
+          spyOn(timeContainer, "text");
+          spyOn(timer, "isZero").and.returnValue(true);
+
+          var changedEvent = new SchedEvent("Dinner", "2014-06-07 22:30:00", "On A Boat!", "10:30 PM")
+
+          $(service).trigger("nextEventUpdate", changedEvent);
+          
+          expect(nameContainer.text).not.toHaveBeenCalled();
+          expect(timeContainer.text).not.toHaveBeenCalled();
+          expect(venueContainer.text).not.toHaveBeenCalled();
+          });
+      });
     });
   });
 });

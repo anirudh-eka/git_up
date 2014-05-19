@@ -1,16 +1,16 @@
 $(document).ready(function() {
 	var clock = new Clock($("#current-time"));
-	var timer = new Timer(clock);
+	var timer = new Timer(clock,$("#time-left"));
 	var timerStatus = new TimerStatus(timer, $("#timer-status"));
 	var service = new SchedEventService(timer);
-	var eventDetails = new NextEventDetails(service, $("#event-name"), $("#event-start-time"), $("#event-venue"));
+	var eventDetails = new NextEventDetails(service, timer, $("#event-name"), $("#event-start-time"), $("#event-venue"));
 
 	service.bootstrapTimerNextEvent($("#event-name"), $("#event-start-time"), $("#event-venue"));
 
 	setInterval(function(){
 		clock.updateCurrentTime();
 		if(!timer.isZero($("#time-left"))) {
-			timer.updateTimer($("#time-left"))
+			timer.updateTimer()
 		}
 	}, 500)
 
@@ -32,10 +32,10 @@ function Clock(timeContainer) {
 
 }
 
-function Timer(clock) {
+function Timer(clock, timerContainer) {
 	this.nextEvent;
 
-	this.isZero = function(timerContainer) {
+	this.isZero = function() {
 		if (timerContainer.text() == "0:00:00"){
 			$(this).trigger("reachedZero");
 			return true;
@@ -43,7 +43,7 @@ function Timer(clock) {
 		return false;
 	}
 
-	this.updateTimer = function(timerContainer) {
+	this.updateTimer = function() {
 		var time = this.nextEvent.startTime - clock.getCurrentTime()
 		var formattedDiff = _formatTimerText(time)
 		timerContainer.text(formattedDiff);
@@ -114,11 +114,13 @@ function TimerStatus(timer, container) {
 	});
 }
 
-function NextEventDetails(service, $name, $time, $venue) {
+function NextEventDetails(service, timer, $name, $time, $venue) {
 	$(service).on("nextEventUpdate", function(e, schedEvent){
-		$name.text(schedEvent.name);
-		$time.text(schedEvent.formattedStartTime);
-		$venue.text(schedEvent.venue);
+		if (!(timer.isZero())) {
+			$name.text(schedEvent.name);
+			$time.text(schedEvent.formattedStartTime);
+			$venue.text(schedEvent.venue);
+		}
 	});
 }
 
