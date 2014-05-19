@@ -55,6 +55,11 @@ function Timer(clock, service, timerContainer) {
 
 	$(service).on("nextEventUpdate", function(e, schedEvent){
 		self.setNextEvent(schedEvent);
+		var minTillNextEvent = (schedEvent.startTime - clock.getCurrentTime())/60000;
+		if (minTillNextEvent <= 20) {
+			self.updateTimer();
+			$(self).trigger("nextEventSoon");
+		}
 	});
 
 	function _formatTimerText(time) {
@@ -113,26 +118,26 @@ function SchedEventService() {
 
 function TimerStatus(timer, container) {
 	$(timer).on("reachedZero", function(){
-		container.text("You're Late!");
+		container.text("YOU'RE LATE!");
 		container.addClass("warning-color")
+	});
+
+	$(timer).on("nextEventSoon", function(){
+		container.text("UNTIL NEXT EVENT");
+		container.removeClass("warning-color")
 	});
 }
 
 function NextEventDetails(service, timer, $name, $time, $venue) {
 	$(service).on("nextEventUpdate", function(e, schedEvent){
-		console.log("heard nextEventUpdate");
 		var minTillNextEvent = (schedEvent.startTime - new Date())/60000;
-		console.log(minTillNextEvent);
-		if (!timer.isZero() || (timer.isZero() && minTillNextEvent <= 20)) {
-			console.log("actually update");
 
+		if (!timer.isZero() || (timer.isZero() && minTillNextEvent <= 20)) {
 			$name.text(schedEvent.name);
 			$time.text(schedEvent.formattedStartTime);
 			$venue.text(schedEvent.venue);
 		}
 	});
-
-	// timerIsNotZero || (timerIsZero && TimeTillNextEvent
 }
 
 function SchedEvent(name, startTime, venue, formattedStartTime) {

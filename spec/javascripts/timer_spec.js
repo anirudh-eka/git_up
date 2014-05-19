@@ -94,13 +94,31 @@ describe("Timer", function(){
   });
 
   describe("when service updates next event", function(){
-
     it("should set the schedEvent to nextEvent", function(){
       var changedEvent = new SchedEvent("Party", "2014-06-07 22:40:00", "On A Boat in Desert!", "11:30 PM")
       $(service).trigger("nextEventUpdate", changedEvent);
       expect(timer.nextEvent).toBe(changedEvent) 
     });  
 
+    describe("when next event is less than 20 minutes", function(){
+      it("should update timer", function(){
+        spyOn(timer, "updateTimer");
+        var nineteenMinutes = 19*60000
+        var changedEvent = new SchedEvent("Party", new Date().getTime() + nineteenMinutes, "On A Boat in Desert!", "11:30 PM")
+        $(service).trigger("nextEventUpdate", changedEvent);
+        expect(timer.updateTimer).toHaveBeenCalled();
+      });
+    });
+
+    describe("when next event is greater than 20 minutes", function(){
+      it("should update timer", function(){
+        spyOn(timer, "updateTimer");
+        var thirtyMinutes = 30*60000
+        var changedEvent = new SchedEvent("Party", new Date().getTime() + thirtyMinutes, "On A Boat in Desert!", "11:30 PM")
+        $(service).trigger("nextEventUpdate", changedEvent);
+        expect(timer.updateTimer).not.toHaveBeenCalled();
+      });
+    });
   });
 
 });
@@ -178,7 +196,7 @@ describe("TimerStatus", function(){
   var timerStatus, statusContainer, timer;
 
   beforeEach(function() {
-    statusContainer = {text: function() {}, addClass: function() {}}
+    statusContainer = {text: function() {}, addClass: function() {}, removeClass: function() {}}
     timer = {};
     timerStatus = new TimerStatus(timer, statusContainer);
   });
@@ -188,8 +206,18 @@ describe("TimerStatus", function(){
       spyOn(statusContainer, "text")
       spyOn(statusContainer, "addClass")
       $(timer).trigger("reachedZero")
-      expect(statusContainer.text).toHaveBeenCalledWith("You're Late!");
+      expect(statusContainer.text).toHaveBeenCalledWith("YOU'RE LATE!");
       expect(statusContainer.addClass).toHaveBeenCalledWith("warning-color");
+    });
+  });
+
+  describe("when the timer's next event is less than 20 minutes", function(){
+    it("should give standard status for timer counting down", function(){
+      spyOn(statusContainer, "text");
+      spyOn(statusContainer, "removeClass");
+      $(timer).trigger("nextEventSoon");
+      expect(statusContainer.text).toHaveBeenCalledWith("UNTIL NEXT EVENT");
+      expect(statusContainer.removeClass).toHaveBeenCalledWith("warning-color");
     });
   });
 });
@@ -222,6 +250,7 @@ describe("NextEventDetails", function(){
         expect(venueContainer.text).toHaveBeenCalledWith("On A Boat!");
       });
     });
+
     describe("when timer is zero", function(){
       it("should not update the details", function(){  
         spyOn(nameContainer, "text");

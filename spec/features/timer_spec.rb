@@ -118,8 +118,8 @@ describe 'home page' do
           page.should have_content("Lunch")
           page.should have_content("The Westin Peachtree Plaza")
           sleep(30.seconds)
-          # page.should have_content("0:19:")
-          # page.should have_content("UNTIL NEXT EVENT")
+          page.should have_content("0:19:")
+          page.should have_content("UNTIL NEXT EVENT")
           page.should have_content("Dinner")
           page.should have_content("The Georgia Aquarium")
         end
