@@ -5,6 +5,8 @@ require 'rspec/rails'
 require 'rspec/autorun'
 require 'capybara/rspec'
 require 'webmock/rspec'
+require 'nulldb_rspec'
+include NullDB::RSpec::NullifiedDatabase
 
 WebMock.disable_net_connect!(allow_localhost: true)
 
