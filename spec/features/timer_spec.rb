@@ -36,7 +36,7 @@ describe 'home page' do
         {"name"=>"Lunch", "event_start"=>"#{DateTime.now + Rational(5, MINUTES_IN_A_DAY)}", "venue" => "The Westin Peachtree Plaza"},
         {"name"=>"Dinner", "event_start"=>"2014-06-07 20:30:00", "venue" => "The Georgia Aquarium"}
       ].to_json
-
+      
       stub_request(:get, /.+naawayday2014.sched.org\/api\/session\/list\?.+/).
            to_return(:status => 200, :body => response, :headers => {'content-type' => 'application/json'})
     

@@ -31,7 +31,7 @@ RSpec.configure do |config|
   # If you're not using ActiveRecord, or you'd prefer not to run each of your
   # examples within a transaction, remove the following line or assign false
   # instead of true.
-  config.use_transactional_fixtures = true
+  # config.use_transactional_fixtures = true
 
   # If true, the base class of anonymous controllers will be inferred
   # automatically. This will be the default behavior in future versions of
@@ -50,8 +50,6 @@ RSpec.configure do |config|
       ].to_json
 
   config.before(:each) do
-    
-
     stub_request(:get, /.+naawayday2014.sched.org\/api\/session\/list\?.+/).
          # with(:headers => {'Accept'=>'*/*', 'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3', 'Host'=>'naawayday2014.sched.org', 'User-Agent'=>'Ruby'}).
          to_return(:status => 200, :body => response, :headers => {'content-type' => 'application/json'})
