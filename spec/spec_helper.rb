@@ -46,6 +46,8 @@ RSpec.configure do |config|
   #     --seed 1234
   config.order = "random"
 
+  config.filter_run_excluding :needs_driver => true
+
   response = [
         {"name"=>"Lunch", "event_start"=>"2014-06-07 12:30:00", "venue" => "The Westin Peachtree Plaza"},
         {"name"=>"Dinner", "event_start"=>"2014-06-07 20:30:00", "venue" => "The Georgia Aquarium"}

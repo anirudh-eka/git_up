@@ -1,12 +1,13 @@
 require 'httparty'
 
 class SchedEvent
-  attr_reader :name, :start_time, :venue
+  attr_reader :name, :start_time, :venue, :group_name
 
-  def initialize(name, start_time, venue)
+  def initialize(name, start_time, venue, group_name=nil)
     @name = name
     @start_time = DateTime.parse(start_time)
     @venue = venue
+    @group_name = group_name
   end
 
   def before?(time)
@@ -15,7 +16,7 @@ class SchedEvent
 
   def ==(object)
     if object.class == SchedEvent
-      return name == object.name && start_time == object.start_time
+      return name == object.name && start_time == object.start_time && group_name == object.group_name
     end
     super(object)
   end

@@ -127,12 +127,10 @@ describe("SchedEventService", function(){
   var timer, service
 
   beforeEach(function() {
-    // timer = {setNextEvent: function(){}};
     service = new SchedEventService();
   });
 
   it("should bootstrap nextEvent from DOM data", function(){
-    // spyOn(timer, "setNextEvent"); 
     var eventNameDOMElement = {text: function() {return "name";}} 
     var eventStartDOMElement = {data: function() {}, text: function(){return "10:30 PM";}} 
     var eventVenueDOMElement = {text: function() {return "On A Boat!"}}
@@ -188,6 +186,20 @@ describe("SchedEventService", function(){
       service._parseJsonAndPublishNextEvent(data);
       
       expect(nextEvent).toEqual(schedEvent);
+    });
+
+    describe("when next event has a group name" , function(){
+      it("should set timer next event name to group name", function(){
+        var nextEvent;
+        $(service).on("nextEventUpdate", function(e, schedEvent){
+          nextEvent = schedEvent;
+        });
+        var data = {next_event: {name: "Dinner", start_time: "2014-06-07 22:30:00", venue: "On A Boat!", formatted_time: "10:30 PM", group_name: "Meal"}}
+        var schedEvent = new SchedEvent("Meal", "2014-06-07 22:30:00", "On A Boat!", "10:30 PM");
+        service._parseJsonAndPublishNextEvent(data);
+
+        expect(nextEvent).toEqual(schedEvent);
+      });
     });
   });
 });

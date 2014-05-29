@@ -22,7 +22,7 @@ describe TimerController do
       allow(SchedEventService).to receive(:find_next) { next_event }
       get :show, :format => :json
       body = JSON.parse(response.body)
-      expect(body).to eq({"next_event"=>{"name" => "Lunch", "start_time" => "2014-06-07T12:30:00.000+00:00", "venue"=> "The Westin Peachtree Plaza", "formatted_time" =>"12:30 PM"}})
+      expect(body).to eq({"next_event"=>{"name" => "Lunch", "start_time" => "2014-06-07T12:30:00.000+00:00", "venue"=> "The Westin Peachtree Plaza", "group_name"=>nil, "formatted_time" =>"12:30 PM"}})
     end
   end
 end

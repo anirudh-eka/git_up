@@ -107,7 +107,13 @@ function SchedEventService() {
 
 	this._parseJsonAndPublishNextEvent = function(data) {
 		var nextEventJson = data.next_event;
-		var nextEvent = new SchedEvent(nextEventJson.name, nextEventJson.start_time, nextEventJson.venue, nextEventJson.formatted_time);
+		console.log(data.next_event);
+		if(nextEventJson["group_name"]) {
+			var nextEvent = new SchedEvent(nextEventJson.group_name, nextEventJson.start_time, nextEventJson.venue, nextEventJson.formatted_time);	
+		} else {
+			var nextEvent = new SchedEvent(nextEventJson.name, nextEventJson.start_time, nextEventJson.venue, nextEventJson.formatted_time);	
+		}
+		
 		$(self).trigger("nextEventUpdate", nextEvent);
 	}
 
