@@ -149,5 +149,5 @@ function NextEventDetails(service, timer, $name, $time, $venue) {
 
 function SchedEvent(name, startTime, venue, formattedStartTime) {
 	console.log(startTime)
-	return {name: name, startTime: new Date(startTime.replace("-05:00", "-04:00")), venue: venue, formattedStartTime: formattedStartTime};	
+	return {name: name, startTime: new Date(startTime), venue: venue, formattedStartTime: formattedStartTime};	
 }
