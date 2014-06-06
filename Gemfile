@@ -40,6 +40,7 @@ group :test do
   gem 'webmock'
   gem 'selenium-webdriver'
 end
+gem 'rails_12factor'
 
 gem 'activerecord-nulldb-adapter'
 
