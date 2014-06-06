@@ -44,7 +44,7 @@ function Timer(clock, service, timerContainer) {
 	}
 
 	this.updateTimer = function() {
-		console.log(this.nextEvent.startTime)
+		// console.log(this.nextEvent.startTime)
 		var time = this.nextEvent.startTime - clock.getCurrentTime()
 		var formattedDiff = _formatTimerText(time)
 		timerContainer.text(formattedDiff);
@@ -148,6 +148,7 @@ function NextEventDetails(service, timer, $name, $time, $venue) {
 }
 
 function SchedEvent(name, startTime, venue, formattedStartTime) {
+	console.log(startTime)
 	console.log(startTime.replace("-05:00", "0:00"))
 	return {name: name, startTime: new Date(startTime.replace("-05:00", "0:00")), venue: venue, formattedStartTime: formattedStartTime};	
 }
