@@ -5,7 +5,10 @@ class SchedEvent
 
   def initialize(name, start_time, venue, group_name=nil)
     @name = name
-    @start_time = DateTime.parse(start_time)
+    # puts '&' *80
+    # p formatted_start_time = "#{start_time} est" if name == "Tours of Martin Luther King Historical Site"
+    # p DateTime.parse(String.new(start_time+" est"))
+    @start_time = DateTime.parse(start_time+" est")
     @venue = venue
     @group_name = group_name
   end

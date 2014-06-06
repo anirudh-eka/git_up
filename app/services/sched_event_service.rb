@@ -1,9 +1,9 @@
 class SchedEventService
   def self.find_next
-    current_time = DateTime.now
+    current_time = DateTime.now.change(:offset => "-0500")
     next_event = nil
-
     get_events_sorted_by_time.each do |event|
+      event unless event.before?(current_time)
       return next_event = event unless event.before?(current_time)
     end
   end
