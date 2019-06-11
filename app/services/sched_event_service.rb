@@ -9,8 +9,8 @@ class SchedEventService
   end
 
   def self.get_events
-    url = "http://naawayday2014.sched.org/api/session/list?api_key=#{ENV['SCHED_KEY']}&format=json"
-    resp = HTTParty.get(url, :headers => {"User-Agent" => "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/34.0.1847.131 Safari/537.36"})
+    url = "https://awayday.sched.com/api/session/list?api_key=#{ENV['SCHED_KEY']}&format=json"
+    resp = HTTParty.get(url)
     events = []
     resp.parsed_response.each do |event|
       events << SchedEvent.new(event["name"], event["event_start"], event["venue"], event["Group Name"])
