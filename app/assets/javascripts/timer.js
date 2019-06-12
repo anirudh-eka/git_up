@@ -44,7 +44,6 @@ function Timer(clock, service, timerContainer) {
 	}
 
 	this.updateTimer = function() {
-		// console.log(this.nextEvent.startTime)
 		var time = this.nextEvent.startTime - clock.getCurrentTime()
 		var formattedDiff = _formatTimerText(time)
 		timerContainer.text(formattedDiff);
@@ -56,11 +55,8 @@ function Timer(clock, service, timerContainer) {
 
 	$(service).on("nextEventUpdate", function(e, schedEvent){
 		self.setNextEvent(schedEvent);
-		var minTillNextEvent = (schedEvent.startTime - clock.getCurrentTime())/60000;
-		if (minTillNextEvent <= 20) {
-			self.updateTimer();
-			$(self).trigger("nextEventSoon");
-		}
+		self.updateTimer();
+		$(self).trigger("nextEventSoon");
 	});
 
 	function _formatTimerText(time) {
@@ -108,7 +104,6 @@ function SchedEventService() {
 
 	this._parseJsonAndPublishNextEvent = function(data) {
 		var nextEventJson = data.next_event;
-		console.log(data.next_event);
 		if(nextEventJson["group_name"]) {
 			var nextEvent = new SchedEvent(nextEventJson.group_name, nextEventJson.start_time, nextEventJson.venue, nextEventJson.formatted_time);	
 		} else {
@@ -148,7 +143,5 @@ function NextEventDetails(service, timer, $name, $time, $venue) {
 }
 
 function SchedEvent(name, startTime, venue, formattedStartTime) {
-	console.log(startTime)
-	// console.log(startTime.replace("-05:00", "Z"))
 	return {name: name, startTime: new Date(startTime), venue: venue, formattedStartTime: formattedStartTime};	
 }
