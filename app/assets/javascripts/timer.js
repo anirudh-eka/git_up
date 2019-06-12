@@ -34,6 +34,14 @@ function Clock(timeContainer) {
 function Timer(clock, service, timerContainer) {
 	var self = this;
 	this.nextEvent;
+	
+	this.lessThanAMinuteLeft = function() {
+        if(timerContainer.text() <= '0:00:59') {
+			$(this).trigger('oneMinuteLeft');
+			return true;
+		}
+		return false
+	}
 
 	this.isZero = function() {
 		if (timerContainer.text() == "0:00:00"){

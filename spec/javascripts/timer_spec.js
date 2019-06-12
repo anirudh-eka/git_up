@@ -121,6 +121,41 @@ describe("Timer", function(){
     });
   });
 
+  describe('lessThanAMinuteLeft', function() {
+    describe("when time to next event is less than a minute", function() {
+      it("should return true when time is 59 seconds remaining", function() {
+        timerContainer.text = function() { return "0:00:59"}
+
+        expect(timer.lessThanAMinuteLeft()).toBe(true)
+      })
+
+      it("should return true when time is 1 second remaining", function() {
+        timerContainer.text = function() { return "0:00:01"}
+
+        expect(timer.lessThanAMinuteLeft()).toBe(true)
+      })
+
+      it("should emit the time threshold event", function() {
+        var eventWasEmitted = false
+        $(timer).on('oneMinuteLeft', function() {
+          eventWasEmitted = true
+        })
+
+        timerContainer.text = function() { return "0:00:01"}
+        timer.lessThanAMinuteLeft()
+
+        expect(eventWasEmitted).toBe(true)
+      })
+    })
+
+    describe("when time to next event is more than a minute", function() {
+      it("should return false", function() {
+        timerContainer.text = function() { return "0:01:59"}
+
+        expect(timer.lessThanAMinuteLeft()).toBe(false)
+      })
+    })
+  });
 });
 
 describe("SchedEventService", function(){
@@ -296,5 +331,6 @@ describe("NextEventDetails", function(){
         expect(venueContainer.text).toHaveBeenCalledWith("On A Boat in Desert!");
       });
     });
+
   });
 });
