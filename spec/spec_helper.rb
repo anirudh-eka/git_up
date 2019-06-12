@@ -45,6 +45,7 @@ RSpec.configure do |config|
   # the seed, which is printed after each run.
   #     --seed 1234
   config.order = "random"
+  config.include Capybara::DSL
 
   config.filter_run_excluding :needs_driver => true
 
@@ -54,7 +55,7 @@ RSpec.configure do |config|
       ].to_json
 
   config.before(:each) do
-    stub_request(:get, /.+naawayday2014.sched.org\/api\/session\/list\?.+/).
+    stub_request(:get, /#{Regexp.quote(SchedEventService.base_url)}.+/).
          # with(:headers => {'Accept'=>'*/*', 'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3', 'Host'=>'naawayday2014.sched.org', 'User-Agent'=>'Ruby'}).
          to_return(:status => 200, :body => response, :headers => {'content-type' => 'application/json'})
   end

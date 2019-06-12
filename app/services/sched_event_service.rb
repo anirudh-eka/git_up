@@ -1,4 +1,8 @@
 class SchedEventService
+  def self.base_url
+    "https://awayday.sched.com/api/session/list"
+  end
+
   def self.find_next
     current_time = DateTime.now.change(:offset => "-0500")
     next_event = nil
@@ -9,7 +13,7 @@ class SchedEventService
   end
 
   def self.get_events
-    url = "https://awayday.sched.com/api/session/list?api_key=#{ENV['SCHED_KEY']}&format=json"
+    url = "#{base_url}?api_key=#{ENV['SCHED_KEY']}&format=json"
     resp = HTTParty.get(url)
     events = []
     resp.parsed_response.each do |event|
