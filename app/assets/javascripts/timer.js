@@ -4,6 +4,7 @@ $(document).ready(function() {
 	var timer = new Timer(clock, service, $("#time-left"));
 	var timerStatus = new TimerStatus(timer, $("#timer-status"));
 	var eventDetails = new NextEventDetails(service, timer, $("#event-name"), $("#event-start-time"), $("#event-venue"));
+	var app = new App(timer, $('body'))
 	service.bootstrapTimerNextEvent($("#event-name"), $("#event-start-time"), $("#event-venue"));
 
 	setInterval(function(){
@@ -136,6 +137,12 @@ function TimerStatus(timer, container) {
 		container.text("UNTIL NEXT EVENT");
 		container.removeClass("warning-color")
 	});
+}
+
+function App(timer, container) {
+	$(timer).on("oneMinuteLeft", function() {
+		container.addClass("warning-flash")
+	})
 }
 
 function NextEventDetails(service, timer, $name, $time, $venue) {

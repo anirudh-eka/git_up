@@ -269,6 +269,27 @@ describe("TimerStatus", function(){
   });
 });
 
+describe("App", function() {
+  var app, timer, container
+
+  beforeEach(function() {
+    container = {
+      addClass: function() {},
+      removeClass: function() {}
+    }
+    timer = {};
+    app = new App(timer, container)
+  });
+
+  describe("when the timer reaches one minute left", function(){
+    it("should cause the screen to blink", function(){
+      spyOn(container, "addClass")
+      $(timer).trigger("oneMinuteLeft")
+      expect(container.addClass).toHaveBeenCalledWith("warning-flash");
+    });
+  });
+});
+
 describe("NextEventDetails", function(){
   describe("when SchedEventService successfully imports new data", function(){
     var nameContainer, venueContainer, timeContainer, timer, service, nextEventDetails;
