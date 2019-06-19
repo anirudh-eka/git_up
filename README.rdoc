@@ -28,3 +28,11 @@ Please feel free to use a different markup language if you do not plan to run
 <tt>rake doc:app</tt>.
 
 To run the  js tests, do +rake spec:javascript+
+
+
+Each time you make changes on your CSS you need to run the following commands on the terminal
+
+$bundle exec rake assets:precompile
+$git add . 
+$git commit -m "msg" 
+$git push heroku master
