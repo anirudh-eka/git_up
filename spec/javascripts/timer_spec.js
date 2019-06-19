@@ -100,23 +100,26 @@ describe("Timer", function(){
       expect(timer.nextEvent).toBe(changedEvent) 
     });  
 
-    describe("when next event is less than 20 minutes", function(){
-      it("should update timer", function(){
-        spyOn(timer, "updateTimer");
-        var nineteenMinutes = 19*60000
-        var changedEvent = new SchedEvent("Party", new Date().getTime() + nineteenMinutes, "On A Boat in Desert!", "11:30 PM")
-        $(service).trigger("nextEventUpdate", changedEvent);
-        expect(timer.updateTimer).toHaveBeenCalled();
-      });
+    it("should update timer", function(){
+      spyOn(timer, "updateTimer");
+      var nineteenMinutes = 19*60000
+      var changedEvent = new SchedEvent("Party", new Date().getTime() + nineteenMinutes, "On A Boat in Desert!", "11:30 PM")
+      $(service).trigger("nextEventUpdate", changedEvent);
+      expect(timer.updateTimer).toHaveBeenCalled();
     });
 
-    describe("when next event is greater than 20 minutes", function(){
-      it("should update timer", function(){
-        spyOn(timer, "updateTimer");
-        var thirtyMinutes = 30*60000
-        var changedEvent = new SchedEvent("Party", new Date().getTime() + thirtyMinutes, "On A Boat in Desert!", "11:30 PM")
-        $(service).trigger("nextEventUpdate", changedEvent);
-        expect(timer.updateTimer).toHaveBeenCalled();
+    describe("when the next event is the same as the currently served event", function() {
+      it("should not trigger the nextEventSoon event", function() {
+        var nextEventSoonTriggered = false;
+        $(timer).on('nextEventSoon', function() {
+          nextEventSoonTriggered = true;
+        });
+
+        var schedEvent = new SchedEvent("Dinner", "2014-06-07T22:30:00Z", "On A Boat!", "10:30 PM");
+        timer.setNextEvent(schedEvent);
+
+        $(service).trigger("nextEventUpdate", schedEvent);
+        expect(nextEventSoonTriggered).toBe(false);
       });
     });
   });
@@ -286,6 +289,14 @@ describe("App", function() {
       spyOn(container, "addClass")
       $(timer).trigger("oneMinuteLeft")
       expect(container.addClass).toHaveBeenCalledWith("warning-flash");
+    });
+  });
+
+  describe("when the timer reaches zero minutes left", function(){
+    it("should cause the screen to stop blinking", function(){
+      spyOn(container, "removeClass")
+      $(timer).trigger("nextEventSoon")
+      expect(container.removeClass).toHaveBeenCalledWith("warning-flash");
     });
   });
 });

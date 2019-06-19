@@ -56,6 +56,10 @@ function Timer(clock, service, timerContainer) {
 		var time = this.nextEvent.startTime - clock.getCurrentTime()
 		var formattedDiff = _formatTimerText(time)
 		timerContainer.text(formattedDiff);
+       
+		if(formattedDiff < "0:01:00") {
+			self.lessThanAMinuteLeft()
+		} 
 	}
 
 	this.setNextEvent = function(schedEvent) {
@@ -63,9 +67,11 @@ function Timer(clock, service, timerContainer) {
 	}
 
 	$(service).on("nextEventUpdate", function(e, schedEvent){
-		self.setNextEvent(schedEvent);
-		self.updateTimer();
-		$(self).trigger("nextEventSoon");
+		if(!self.nextEvent || schedEvent.name !== self.nextEvent.name) {
+			self.setNextEvent(schedEvent);
+			self.updateTimer();
+			$(self).trigger("nextEventSoon");
+		}
 	});
 
 	function _formatTimerText(time) {
@@ -143,6 +149,10 @@ function App(timer, container) {
 	$(timer).on("oneMinuteLeft", function() {
 		container.addClass("warning-flash")
 	})
+
+	$(timer).on("nextEventSoon", function(){
+		container.removeClass("warning-flash")
+	});
 }
 
 function NextEventDetails(service, timer, $name, $time, $venue) {
