@@ -12,7 +12,8 @@ describe 'home page' do
 
   context 'when next event has a generic name' do
     it "should use the generic name" do
-      Capybara.default_wait_time = 5
+      Capybara.default_max_wait_time = 5
+      MINUTES_IN_A_DAY = 1440
       response = [
         {"name"=>"Lunch", "event_start"=>"#{DateTime.now + Rational(5, MINUTES_IN_A_DAY)}", "venue" => "The Westin Peachtree Plaza", "Group Name"=> "Meal"}
       ].to_json

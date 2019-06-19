@@ -25,7 +25,7 @@ describe SchedEventService do
         {"name"=>"Dinner", "event_start"=>"2014-06-07 20:30:00", "venue"=>"The Georgia Aquarium", "Group Name" => "Meal"}
       ].to_json
       
-      stub_request(:get, /.+naawayday2014.sched.org\/api\/session\/list\?.+/).
+      stub_request(:get, /#{Regexp.quote(SchedEventService.base_url)}.+/).
            to_return(:status => 200, :body => response, :headers => { 'content-type' => 'application/json' })
 
       events = [SchedEvent.new("Lunch", "2014-06-07 12:30:00", "The Westin Peachtree Plaza"), SchedEvent.new("Dinner", "2014-06-07 20:30:00", "The Georgia Aquarium", "Meal")]
@@ -40,7 +40,7 @@ describe SchedEventService do
         {"name"=>"Lunch", "event_start"=>"2014-06-07 12:30:00", "venue"=>"The Westin Peachtree Plaza"}
       ].to_json
       
-      stub_request(:get, /.+naawayday2014.sched.org\/api\/session\/list\?.+/).
+      stub_request(:get, /#{Regexp.quote(SchedEventService.base_url)}.+/).
            to_return(:status => 200, :body => response, :headers => { 'content-type' => 'application/json' })
 
       events = [SchedEvent.new("Lunch", "2014-06-07 12:30:00", "The Westin Peachtree Plaza"), SchedEvent.new("Dinner", "2014-06-07 20:30:00", "The Georgia Aquarium")]
