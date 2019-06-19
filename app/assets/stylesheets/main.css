@@ -35,11 +35,13 @@ section {
 .current-time {
 	text-align: right;
 	margin-right: 30px;
+	text-shadow: 2px 2px 3px yellow, 3px 3px 5px red;
 }
 
 .current-event-timer {
 	font-weight: bold;
 	font-size: 148px;
+	text-shadow: 2px 2px 3px yellow, 3px 3px 5px red;
 }
 
 .warning-color {
@@ -50,10 +52,12 @@ sub {
 	display: block;
 	text-transform: uppercase;
 	font-size: 48px;
+	text-shadow: 2px 2px 3px yellow, 3px 3px 5px red;
 }
 
 ul {
 	list-style: none;
 	font-style: italic;
 	line-height: 36px;
+	text-shadow: 2px 2px 3px pink, 3px 3px 5px red;
 }
