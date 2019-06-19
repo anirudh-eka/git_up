@@ -17,7 +17,7 @@ class SchedEventService
     resp = HTTParty.get(url)
     events = []
     resp.parsed_response.each do |event|
-      if event["event_type"] != "Other" && event["event_type"] != "Breakfast" && event["event_type"] != "Meet & Greet" && event["event_type"] != "Wellbeing" && event["event_type"] != "Creatives" && event["event_type"] != "Social"
+      if event_type_is_included?(event)
         events << SchedEvent.new(event["name"], event["event_start"], event["venue"], event["Group Name"])
       end
     end
@@ -28,5 +28,12 @@ class SchedEventService
     get_events.sort do |event_a, event_b|
       event_a.start_time <=> event_b.start_time
     end
+  end
+
+
+  private
+
+  def self.event_type_is_included?(event)
+    !(["Other", "Breakfast", "Meet & Greet", "Wellbeing", "Creatives", "Social"].include?(event["event_type"]))
   end
 end
