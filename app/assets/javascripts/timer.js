@@ -4,6 +4,7 @@ $(document).ready(function() {
 	var timer = new Timer(clock, service, $("#time-left"));
 	var timerStatus = new TimerStatus(timer, $("#timer-status"));
 	var eventDetails = new NextEventDetails(service, timer, $("#event-name"), $("#event-start-time"), $("#event-venue"));
+	var app = new App(timer, $('body'))
 	service.bootstrapTimerNextEvent($("#event-name"), $("#event-start-time"), $("#event-venue"));
 
 	setInterval(function(){
@@ -34,6 +35,14 @@ function Clock(timeContainer) {
 function Timer(clock, service, timerContainer) {
 	var self = this;
 	this.nextEvent;
+	
+	this.lessThanAMinuteLeft = function() {
+        if(timerContainer.text() <= '0:00:59') {
+			$(this).trigger('oneMinuteLeft');
+			return true;
+		}
+		return false
+	}
 
 	this.isZero = function() {
 		if (timerContainer.text() == "0:00:00"){
@@ -44,10 +53,13 @@ function Timer(clock, service, timerContainer) {
 	}
 
 	this.updateTimer = function() {
-		// console.log(this.nextEvent.startTime)
 		var time = this.nextEvent.startTime - clock.getCurrentTime()
 		var formattedDiff = _formatTimerText(time)
 		timerContainer.text(formattedDiff);
+       
+		if(formattedDiff < "0:01:00") {
+			self.lessThanAMinuteLeft()
+		} 
 	}
 
 	this.setNextEvent = function(schedEvent) {
@@ -55,9 +67,8 @@ function Timer(clock, service, timerContainer) {
 	}
 
 	$(service).on("nextEventUpdate", function(e, schedEvent){
-		self.setNextEvent(schedEvent);
-		var minTillNextEvent = (schedEvent.startTime - clock.getCurrentTime())/60000;
-		if (minTillNextEvent <= 20) {
+		if(!self.nextEvent || schedEvent.name !== self.nextEvent.name) {
+			self.setNextEvent(schedEvent);
 			self.updateTimer();
 			$(self).trigger("nextEventSoon");
 		}
@@ -108,7 +119,6 @@ function SchedEventService() {
 
 	this._parseJsonAndPublishNextEvent = function(data) {
 		var nextEventJson = data.next_event;
-		console.log(data.next_event);
 		if(nextEventJson["group_name"]) {
 			var nextEvent = new SchedEvent(nextEventJson.group_name, nextEventJson.start_time, nextEventJson.venue, nextEventJson.formatted_time);	
 		} else {
@@ -135,6 +145,16 @@ function TimerStatus(timer, container) {
 	});
 }
 
+function App(timer, container) {
+	$(timer).on("oneMinuteLeft", function() {
+		container.addClass("warning-flash")
+	})
+
+	$(timer).on("nextEventSoon", function(){
+		container.removeClass("warning-flash")
+	});
+}
+
 function NextEventDetails(service, timer, $name, $time, $venue) {
 	$(service).on("nextEventUpdate", function(e, schedEvent){
 		var minTillNextEvent = (schedEvent.startTime - new Date())/60000;
@@ -148,7 +168,5 @@ function NextEventDetails(service, timer, $name, $time, $venue) {
 }
 
 function SchedEvent(name, startTime, venue, formattedStartTime) {
-	console.log(startTime)
-	console.log(startTime.replace("-05:00", "0:00"))
-	return {name: name, startTime: new Date(startTime.replace("-05:00", "0:00")), venue: venue, formattedStartTime: formattedStartTime};	
+	return {name: name, startTime: new Date(startTime), venue: venue, formattedStartTime: formattedStartTime};	
 }
