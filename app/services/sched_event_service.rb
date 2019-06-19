@@ -17,7 +17,9 @@ class SchedEventService
     resp = HTTParty.get(url)
     events = []
     resp.parsed_response.each do |event|
-      events << SchedEvent.new(event["name"], event["event_start"], event["venue"], event["Group Name"])
+      if event["event_type"] != "Other" && event["event_type"] != "Breakfast" && event["event_type"] != "Meet & Greet" && event["event_type"] != "Wellbeing" && event["event_type"] != "Creatives" && event["event_type"] != "Social"
+        events << SchedEvent.new(event["name"], event["event_start"], event["venue"], event["Group Name"])
+      end
     end
     events
   end

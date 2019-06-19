@@ -47,5 +47,19 @@ describe SchedEventService do
 
       expect(SchedEventService.get_events_sorted_by_time).to eq(events)
     end
+
+    it "Should only show events by need to be shown on the count down timer" do
+      response = [
+        {"name"=>"Dinner", "event_start"=>"2014-06-07 20:30:00", "event_type"=>"Other","venue"=>"The Georgia Aquarium"},
+        {"name"=>"Lunch", "event_start"=>"2014-06-07 12:30:00", "event_type"=>"Breakout session","venue"=>"The Westin Peachtree Plaza"}
+      ].to_json
+      
+      stub_request(:get, /#{Regexp.quote(SchedEventService.base_url)}.+/).
+           to_return(:status => 200, :body => response, :headers => { 'content-type' => 'application/json' })
+
+      events = [SchedEvent.new("Lunch", "2014-06-07 12:30:00", "The Westin Peachtree Plaza")]
+
+      expect(SchedEventService.get_events_sorted_by_time).to eq(events)
+    end
   end
 end
