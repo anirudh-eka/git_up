@@ -17,9 +17,9 @@ class SchedEventService
     resp = HTTParty.get(url)
     events = []
     resp.parsed_response.each do |event|
-      if event_type_is_included?(event)
+      # if event_type_is_included?(event)
         events << SchedEvent.new(event["name"], event["event_start"], event["venue"], event["Group Name"])
-      end
+      # end
     end
     events
   end
